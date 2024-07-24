@@ -1,3 +1,4 @@
+from absl import logging
 import operator
 from functools import reduce
 from typing import Sequence
@@ -6,9 +7,10 @@ import jax
 import jax.numpy as jnp
 from flax import traverse_util
 from flax.core import freeze, unfreeze
+from flax.training import checkpoints
 from jax import random
 from jax.tree_util import tree_reduce, tree_flatten, tree_map
-import zlib
+
 
 
 # The AttributeDict class is a subclass of the dict class that allows accessing dictionary values
@@ -122,6 +124,21 @@ def forest_stack_weighted_sum(tree_stack, weight_stack):
 def forest_stack_mean(tree_stack, axis=0):
   return tree_map(lambda x: x.mean(axis=axis), tree_stack)
 
+def tree_inner_prod(t1, t2):
+  return tree_sum(tree_multiply(t1, t2))
 
 def tree_count(t):
   return sum(x.size for x in jax.tree_leaves(t))
+
+def cosine_similarity(t1,t2):
+  return tree_inner_prod(t1, t2) / (tree_norm(t1)*tree_norm(t2))
+
+
+def restore_checkpoint(workdir, target=None):
+  return checkpoints.restore_checkpoint(workdir, target=target)
+
+def save_checkpoint(workdir, state, keep=1, keep_every_n_steps=None, overwrite=False):
+  step = int(state.step)
+  logging.info('Saving checkpoint step %d.', step)
+  checkpoints.save_checkpoint(workdir, state, step, keep=keep, keep_every_n_steps=keep_every_n_steps, overwrite=overwrite) 
+

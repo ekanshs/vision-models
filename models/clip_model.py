@@ -22,8 +22,8 @@ class CLIPModelwithClassifier(nn.Module):
   config: Any
   vision_module : ModuleDef
   classifier_module : ModuleDef
-  dtype: jnp.dtype = jnp.float32
-  
+  dtype: jnp.dtype = jnp.float32  
+
   @nn.compact
   def __call__(self, pixel_values):
     encoder_outputs = self.vision_module(self.config.vision_config, dtype=self.dtype, name='encoder')(
@@ -48,7 +48,7 @@ class CLIPModelwithClassifier(nn.Module):
     return logits
   
   def permutation_spec(self, skip_classifier=False):
-    ## TBD: July 24
+    ## TBD:
     pass
 
 class MultiheadClassifier(nn.Module):
@@ -84,26 +84,26 @@ def get_clip_model_with_classifier(*, num_classes, **kwargs):
   return CLIPModelwithClassifier(classifier_module=classifier, **kwargs)
 
 
-def ViTB16(*, num_classes, **kwargs):
+def ViTB16(*, num_classes, dtype, **kwargs):
   model_config = AutoConfig.from_pretrained('openai/clip-vit-base-patch16')
   return get_clip_model_with_classifier(num_classes=num_classes, 
                                         vision_module=vision_module, 
                                         config=model_config,
-                                        **kwargs)
+                                        dtype=dtype)
 
-def ViTB32(*, num_classes, **kwargs):
+def ViTB32(*, num_classes, dtype, **kwargs):
   model_config = AutoConfig.from_pretrained('openai/clip-vit-base-patch32')
   return get_clip_model_with_classifier(num_classes=num_classes, 
                                         vision_module=vision_module, 
-                                        config=model_config, 
-                                        **kwargs)
+                                        config=model_config,
+                                        dtype=dtype)
 
-def ViTL14(*, num_classes, **kwargs):
+def ViTL14(*, num_classes, dtype, **kwargs):
   model_config = AutoConfig.from_pretrained('openai/clip-vit-large-patch14')
   return get_clip_model_with_classifier(num_classes=num_classes, 
                                         vision_module=vision_module, 
-                                        config=model_config, 
-                                        **kwargs)
+                                        config=model_config,
+                                        dtype=dtype)
 
 def get_zero_shot_params(model_name, dataset=None, datasets=None):
   assert (dataset is not None) or (datasets is not None)

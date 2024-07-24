@@ -29,14 +29,7 @@ from optax_utils import create_learning_rate_fn, create_path_aware_tx
 import numpy as np
 
 
-def restore_checkpoint(workdir, target=None):
-  return checkpoints.restore_checkpoint(workdir, target=target)
-
-def save_checkpoint(workdir, state, keep=1, keep_every_n_steps=None):
-  step = int(state.step)
-  logging.info('Saving checkpoint step %d.', step)
-  checkpoints.save_checkpoint(workdir, state, step, keep=keep, keep_every_n_steps=keep_every_n_steps) 
-
+from utils import save_checkpoint, restore_checkpoint
 
 def get_metrics(metrics, axis_name):
   if axis_name is not None:
@@ -122,7 +115,6 @@ def train_and_evaluate(
   # Training arguments
   num_epochs = int(config.training_schedule.num_epochs)
   train_batch_size = int(config.training_schedule.per_device_train_batch_size) * jax.device_count()
-  per_device_eval_batch_size = int(config.training_schedule.per_device_eval_batch_size)
 
   steps_per_epoch = num_train_examples // train_batch_size
   total_train_steps = steps_per_epoch * num_epochs
@@ -131,16 +123,17 @@ def train_and_evaluate(
   learning_rate_fn = create_learning_rate_fn(
         config.training_schedule.decay_schedule, 
         total_train_steps, total_warmup_steps, 
-        learning_rate=config.optimizer.learning_rate * np.sqrt(jax.device_count())
-    )
+        learning_rate=config.optimizer.learning_rate)
   
   # Setup model and train state
   model = models.create_model(
     model_cls= getattr(models, config.model), 
     num_classes=num_classes, 
-    dtype=model_dtype)  
+    dtype=model_dtype, 
+    width_multiplier=config.width_multiplier,
+    projection_dim=512)  
   
-  def train_classifier(params, at_init=True):
+  def train_classifier(params):
     # train classifier
     total_classifier_train_steps = steps_per_epoch * int(config.training_schedule.classifier.num_epochs)
     total_classifier_warmup_steps = int(steps_per_epoch * config.training_schedule.classifier.warmup_epochs)
@@ -160,10 +153,6 @@ def train_and_evaluate(
       tx=tx
     )  
     train_iter = input_pipeline.prefetch(ds_train, config.prefetch, axis_name)
-    if at_init:
-      state = restore_checkpoint(os.path.join(workdir, 'init'), state)
-      step_offset = int(state.step)
-    
     if axis_name is not None:
       state = jax_utils.replicate(state)
 
@@ -172,19 +161,12 @@ def train_and_evaluate(
       batch = next(train_iter)
       progress_bar.set_description(f"Classifier: {step} / {total_classifier_train_steps}")
       state, _ = train_step(state, batch, axis_name)
-      
-      if at_init and step==total_classifier_train_steps:
-        if axis_name is not None:
-          save_checkpoint(os.path.join(workdir, 'init'), jax_utils.unreplicate(state))
-        else:
-          save_checkpoint(os.path.join(workdir, 'init'), state)
-    
+          
     logging.info(f"Classifier layer trained.") 
     if axis_name is not None:
       state = jax_utils.unreplicate(state)
 
     return state.params
-  
   
   def initialize(key, model, batch_shape):
     @jax.jit
@@ -196,36 +178,35 @@ def train_and_evaluate(
   init_params = initialize(rng, model, batch_shape=(1,config[dataset].pp.crop, config[dataset].pp.crop, 3))
   
   if config.from_pretrained:
-    if config.pretrained_dir is not None:
-      pretrained_params = restore_checkpoint(config.pretrained_dir)['params']
-      init_params = {'encoder' : pretrained_params['params']['encoder'],
-          'visual_projection' : pretrained_params['params']['visual_projection'],
-          'logit_scale' : pretrained_params['params']['logit_scale'],
+    pretrained_raw_state = restore_checkpoint(config.pretrained_dir)
+    if pretrained_raw_state is not None:
+      init_params = {'encoder' : pretrained_raw_state['params']['encoder'],
+          'visual_projection' : pretrained_raw_state['params']['visual_projection'],
+          'logit_scale' : pretrained_raw_state['params']['logit_scale'],
           'classifier' : init_params['classifier']
           }
     else:
       init_params = models.get_zero_shot_params(config.model, dataset)
 
-    if config.train_classifier_at_init:
-      init_params = train_classifier(init_params, at_init=True)
-  
-  keywords = []
-  if config.train_projection:
-    keywords += ['visual_projection']
-  if config.train_encoder:
-    keywords += ['encoder']
-  if config.train_classifier:
-    keywords += ['classifier']
-  if config.train_logit_scale:
-    keywords += ['logit_scale']
+  save_initialization = True
+  if config.train_classifier_at_init:
+    raw_init_state = restore_checkpoint(os.path.join(workdir, "init"))
+    if raw_init_state is None:
+      init_params = train_classifier(init_params)
+    else:
+      init_params = raw_init_state['params']
+      save_initialization = False
 
-
+  keywords = ['encoder', 'visual_projection', 'classifier', 'logit_scale'] # TODO: In the sequel allow users to configure which layer to train
   tx = create_path_aware_tx(config.optimizer, learning_rate_fn, init_params, keywords)
   state = TrainState.create(
     apply_fn=model.apply,
     params=init_params,
     tx=tx
   )
+
+  if save_initialization:
+    save_checkpoint(os.path.join(workdir, "init"), state)
 
   if axis_name is not None:
     state = jax_utils.replicate(state)
@@ -238,6 +219,7 @@ def train_and_evaluate(
     state = jax_utils.unreplicate(state)
   
   state = restore_checkpoint(workdir, state)
+  
   step_offset = int(state.step)
   
   if axis_name is not None:

@@ -6,7 +6,7 @@ python main.py --job_type=train --config=configs/default.py:ResNet18;cifar10;sgd
 
 """
 
-from configs.common import TRAIN_OPTIMIZER_PRESETS, DATASET_PRESETS, MODEL_PRESETS, TRAINING_SCHEDULE
+from configs.common import TRAIN_OPTIMIZER_PRESETS, DATASET_PRESETS, TRAINING_SCHEDULE
 from configs import common
 import ml_collections
 
@@ -23,6 +23,8 @@ def with_model_dataset_opt(config: ml_collections.ConfigDict, model: str, datase
   config[dataset] = DATASET_PRESETS[dataset]
   config.training_schedule = TRAINING_SCHEDULE[decay_schedule]
   config.optimizer = TRAIN_OPTIMIZER_PRESETS[opt]
-  return config
-
+  config.pretrained_dir = ''
+  config.from_pretrained = True
+  config.train_classifier_at_init = True
+  return config.lock()
 

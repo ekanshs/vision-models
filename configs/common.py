@@ -13,6 +13,7 @@ def get_config():
   config.seed = 0
   config.model = None
   config.dataset = None
+  config.datasets = None
   config.label_smoothing_factor = 0.0
   config.permutations_dir = None
   config.pretrained_dir = None
@@ -38,15 +39,10 @@ def get_config():
   config.overwrite_cache = False
   config.num_workers = 1
 
-  config.width_multiplier = None
+  config.width_multiplier = 1
   
   ## Trainable param blocks
-  config.train_classifier_at_init = None
-  config.train_encoder = None
-  config.train_visual_projection = None
-  config.train_classifier = None
-  config.train_logit_scale = None
-  
+  config.train_classifier_at_init = None  
   return config.lock()
 
 
@@ -99,12 +95,12 @@ TRAIN_OPTIMIZER_PRESETS =  {
         'learning_rate': 1e-3, 
         'momentum': 0.9,
         'weight_decay': 1e-1,
-        'clip_global_norm' : 1., 
+        'clip_global_norm' : None, 
         'classifier' : ml_collections.ConfigDict({'name': 'sgd',
           'learning_rate': 1e-3, 
           'momentum': 0.9,
           'weight_decay': 1e-1,
-          'clip_global_norm' : 1., 
+          'clip_global_norm' : None, 
           'b1': 0.9,  
           'b2': 0.999,  
           'eps':1e-8,
@@ -122,7 +118,7 @@ TRAIN_OPTIMIZER_PRESETS =  {
           'learning_rate': 1e-3, 
           'momentum': 0.9,
           'weight_decay': 1e-1,
-          'clip_global_norm' : 1., 
+          'clip_global_norm' : None, 
           'b1': 0.9,  
           'b2': 0.999,  
           'eps':1e-8,

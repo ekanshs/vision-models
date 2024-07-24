@@ -26,18 +26,15 @@ def with_model_dataset_opt(config: ml_collections.ConfigDict,
   config.model = model
   config.dataset = dataset
   
-  config.pretrained_name = MODEL_PRESETS['ViTB16'].pretrained_name
   config[dataset] = DATASET_PRESETS[dataset]
-  
+
   config.training_schedule = TRAINING_SCHEDULE[decay_schedule]
   config.training_schedule.num_epochs = NUM_EPOCHS_PER_DATASET[dataset]
-  config.training_schedule.warmup_epochs = 5
+  config.training_schedule.warmup_epochs = 1
   config.optimizer = TRAIN_OPTIMIZER_PRESETS[opt]
-  config.optimizer.clip_global_norm = None
-  config.train_projection = True
-  config.train_logit_scale = False
-  config.train_encoder = True
-  config.train_classifier = False
+  config.optimizer.clip_global_norm = 100.
+  config.from_pretrained = False
+  config.train_classifier_at_init = False
   
   if opt == 'sgd':
     config.optimizer.learning_rate = 1e-1
@@ -45,7 +42,6 @@ def with_model_dataset_opt(config: ml_collections.ConfigDict,
     config.optimizer.learning_rate = 1e-3
   
   config.optimizer.weight_decay = 1e-4
-  config.width_multiplier = 1
   return config.lock()
 
 
