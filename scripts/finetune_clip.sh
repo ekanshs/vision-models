@@ -29,7 +29,6 @@ SEED=$
 
 python main.py --job_type train --config configs/finetune.py:${MODEL},${DATASET},${OPTIMIZER},${DECAY_SCHEDULE} \
       --config.seed=${SEED} \
-      --config.width_multiplier=${WIDTH_MULTIPLIER} \
       --config.optimizer.learning_rate ${LR} \
       --config.training_schedule.num_epochs ${NUM_EPOCHS} \
       --config.training_schedule.warmup_epochs ${WARMUP_EPOCHS} \ 

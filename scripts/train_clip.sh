@@ -26,6 +26,5 @@ SEED=$6
 
 python main.py --job_type train --config configs/train_from_scratch.py:${MODEL},${DATASET},${OPTIMIZER},${DECAY_SCHEDULE} \
        --config.seed=${SEED} \
-       --config.width_multiplier=${WIDTH_MULTIPLIER} \
        --config.optimizer.learning_rate ${LR} \
        --expdir ${PWD}/experiments/${MODEL}/scratch/${DATASET}/${OPTIMIZER}/${DECAY_SCHEDULE}_decay/peak_lr_${LR}/seed_${SEED} 
