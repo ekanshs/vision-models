@@ -38,16 +38,16 @@ def with_model_dataset_opt(config: ml_collections.ConfigDict,
 
 
 NUM_EPOCHS_PER_DATASET = {
-  'cifar10': 180,
-  'cifar100': 180,
-  'cars': 180,
-  'dtd': 180,
-  'eurosat': 180,
-  'gtsrb': 180,
-  'mnist': 180,
-  'resisc45': 180,
-  'sun397': 180,
-  'svhn_cropped': 180,
-  'food101': 180, 
+  'cifar10': 120,
+  'cifar100': 120,
+  'cars': 120,
+  'dtd': 120,
+  'eurosat': 120,
+  'gtsrb': 120,
+  'mnist': 120,
+  'resisc45': 120,
+  'sun397': 120,
+  'svhn_cropped': 120,
+  'food101': 120, 
   'imagenet2012' : 120
 }
