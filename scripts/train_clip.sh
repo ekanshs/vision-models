@@ -17,20 +17,15 @@ export PYTHONPATH=$HOME/condaenvs/jax-0.4.23:$PYTHONPATH
 
 cd ..
 MODEL=$1
-WIDTH_MULTIPLIER=$2
-DATASET=$3
-CROP=$4
-OPTIMIZER=$5
-LR=$6
-DECAY_SCHEDULE=$7
-SEED=$8
+DATASET=$2
+OPTIMIZER=$3
+LR=$4
+DECAY_SCHEDULE=$5
+SEED=$6
 
-python main.py --job_type conv-train --config configs/conv_train.py:${MODEL},${DATASET},${OPTIMIZER},${DECAY_SCHEDULE} \
-       --config.${DATASET}.pp.crop ${CROP} \
+
+python main.py --job_type train --config configs/train_from_scratch.py:${MODEL},${DATASET},${OPTIMIZER},${DECAY_SCHEDULE} \
        --config.seed=${SEED} \
        --config.width_multiplier=${WIDTH_MULTIPLIER} \
        --config.optimizer.learning_rate ${LR} \
-       --expdir ${PWD}/experiments/${MODEL}x${WIDTH_MULTIPLIER}/scratch/${DATASET}_${CROP}/${OPTIMIZER}/${DECAY_SCHEDULE}_${LR}/seed_${SEED} 
-
-       
-# sbatch conv_train.sh VGG16 2 imagenet2012 96 sgd 1e-1 cosine 0
+       --expdir ${PWD}/experiments/${MODEL}/scratch/${DATASET}/${OPTIMIZER}/${DECAY_SCHEDULE}_decay/peak_lr_${LR}/seed_${SEED} 
