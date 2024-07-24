@@ -6,7 +6,7 @@ python main.py --job_type=train --config=configs/default.py:ResNet18;cifar10;sgd
 
 """
 
-from configs.common import TRAIN_OPTIMIZER_PRESETS, DATASET_PRESETS, MODEL_PRESETS, TRAINING_SCHEDULE
+from configs.common import TRAIN_OPTIMIZER_PRESETS, DATASET_PRESETS, TRAINING_SCHEDULE
 from configs import common
 import ml_collections
 

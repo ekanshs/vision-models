@@ -11,7 +11,7 @@ from jax import random
 import jax.numpy as jnp
 
 from flax import jax_utils
-from flax.training import common_utils, checkpoints
+from flax.training import common_utils
 
 import ml_collections
 
@@ -60,15 +60,6 @@ def train_and_evaluate(
     config=config
   )
   
-  platform = jax.local_devices()[0].platform
-  if config.half_precision:
-    if platform == 'tpu':
-      model_dtype = jnp.bfloat16
-    else:
-      model_dtype = jnp.float16
-  else:
-    model_dtype = jnp.float32
-
   rng = random.PRNGKey(config.seed)
   
   axis_name = None
@@ -129,9 +120,9 @@ def train_and_evaluate(
   model = models.create_model(
     model_cls= getattr(models, config.model), 
     num_classes=num_classes, 
-    dtype=model_dtype, 
     width_multiplier=config.width_multiplier,
-    projection_dim=512)  
+    projection_dim=512, 
+    half_precision=config.half_precision)  
   
   def train_classifier(params):
     # train classifier
@@ -156,7 +147,7 @@ def train_and_evaluate(
     if axis_name is not None:
       state = jax_utils.replicate(state)
 
-    progress_bar = tqdm(range(step_offset+1, total_classifier_train_steps + 1))
+    progress_bar = tqdm(range(1, total_classifier_train_steps + 1))
     for step in progress_bar:
       batch = next(train_iter)
       progress_bar.set_description(f"Classifier: {step} / {total_classifier_train_steps}")

@@ -19,6 +19,7 @@ def get_config():
   config.pretrained_dir = None
   config.from_pretrained = True
   config.optimizer = None
+  config.training_schedule = None
 
   # Shuffle buffer size.
   config.shuffle_buffer = 50_000
@@ -55,7 +56,7 @@ TRAINING_SCHEDULE = {
     'per_device_eval_batch_size': 128,
     'seed':42,
     'classifier' : ml_collections.ConfigDict({
-      'num_epochs': 10,
+      'num_epochs': 20,
       'warmup_epochs' : 0
     })
   }),
@@ -67,7 +68,7 @@ TRAINING_SCHEDULE = {
     'per_device_eval_batch_size': 128,
     'seed':42,
     'classifier' : ml_collections.ConfigDict({
-      'num_epochs': 10,
+      'num_epochs': 20,
       'warmup_epochs' : 0
     })
   }),
@@ -81,7 +82,7 @@ TRAINING_SCHEDULE = {
     'milestones': (10,15,18),
     'seed':42,
     'classifier' : ml_collections.ConfigDict({
-      'num_epochs': 10,
+      'num_epochs': 20,
       'warmup_epochs' : 0
     })
   }),
