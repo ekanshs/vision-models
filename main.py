@@ -15,7 +15,9 @@ import jax
 from ml_collections import config_flags
 import tensorflow as tf
 
-from train import train_and_evaluate
+import train
+import multi_task_merge
+
 FLAGS = flags.FLAGS
 
 flags.DEFINE_string('expdir', None, 'Directory where experiment artifacts are stored.')
@@ -51,7 +53,9 @@ def main(argv):
   logging.info(f'Setting {FLAGS.expdir} as the working directory to load and store model state')
 
   if FLAGS.job_type == 'train':
-    train_and_evaluate(FLAGS.config, FLAGS.expdir)
+    train.train_and_evaluate(FLAGS.config, FLAGS.expdir)
+  elif FLAGS.job_type == 'merge':
+    multi_task_merge.evaluate(FLAGS.config)
   else:
     raise app.UsageError(f"job_type, {FLAGS.job_type}, is not defined ")
 

@@ -29,7 +29,7 @@ def with_model_dataset_opt(config: ml_collections.ConfigDict,
   config[dataset] = DATASET_PRESETS[dataset]
 
   config.training_schedule = TRAINING_SCHEDULE[decay_schedule]
-  config.training_schedule.num_epochs = NUM_EPOCHS_PER_DATASET[dataset]
+  config.training_schedule.num_epochs = 120
   config.training_schedule.warmup_epochs = 1
   config.optimizer = TRAIN_OPTIMIZER_PRESETS[opt]
   config.from_pretrained = False
@@ -37,17 +37,3 @@ def with_model_dataset_opt(config: ml_collections.ConfigDict,
   return config.lock()
 
 
-NUM_EPOCHS_PER_DATASET = {
-  'cifar10': 120,
-  'cifar100': 120,
-  'cars': 120,
-  'dtd': 120,
-  'eurosat': 120,
-  'gtsrb': 120,
-  'mnist': 120,
-  'resisc45': 120,
-  'sun397': 120,
-  'svhn_cropped': 120,
-  'food101': 120, 
-  'imagenet2012' : 120
-}

@@ -48,6 +48,9 @@ def forest_unstack(forest):
 def tree_zeros_like(t):
   return tree_map(lambda x: jnp.zeros_like(x), t)
 
+def tree_ones_like(t):
+  return tree_map(lambda x: jnp.ones_like(x), t)
+
 def tree_add(t1, t2):
   return tree_map(lambda x,y: x+y, t1, t2)
 
@@ -132,6 +135,29 @@ def tree_count(t):
 
 def cosine_similarity(t1,t2):
   return tree_inner_prod(t1, t2) / (tree_norm(t1)*tree_norm(t2))
+
+
+
+def normal_tree_like(rng, t):
+  return tree_map(lambda x: random.normal(rng, shape=x.shape), t)
+
+def rademacher_tree_like(rng, t):
+  return tree_map(lambda x: random.rademacher(rng, shape=x.shape), t)
+
+def projection(t1, t2):
+  '''
+  project t1 on t2
+  '''
+  return tree_scalar_multiply(tree_inner_prod(t1, t2), t2)
+
+def orthnormal(t, ts):
+    """
+    make vector t orthogonal to each vector in ts.
+    afterwards, normalize the output w
+    """
+    for t_ in ts:
+        t = tree_subtract(t, projection(t, t_))
+    return normalize_tree(t)
 
 
 def restore_checkpoint(workdir, target=None):

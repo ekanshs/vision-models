@@ -132,7 +132,7 @@ DATASET_PRESETS = ml_collections.ConfigDict({
   'cifar10': ml_collections.ConfigDict(
       { 
         'model_dir': '.',
-        'init_dir': '.',
+        'init_model_dir': '.',
         'tfds_data_dir': None,
         'pp': ml_collections.ConfigDict(
           {'train': 'train',
@@ -144,7 +144,7 @@ DATASET_PRESETS = ml_collections.ConfigDict({
   'cifar100': ml_collections.ConfigDict(
       { 
         'model_dir': '.',
-        'init_dir': '.',
+        'init_model_dir': '.',
         'tfds_data_dir': None,
         'pp': ml_collections.ConfigDict(
           {'train': 'train',
@@ -156,7 +156,7 @@ DATASET_PRESETS = ml_collections.ConfigDict({
   'food101': ml_collections.ConfigDict(
       { 
         'model_dir': '.',
-        'init_dir': '.',
+        'init_model_dir': '.',
         'tfds_data_dir': None,
         'pp': ml_collections.ConfigDict(
           {'train': 'train',
@@ -168,7 +168,7 @@ DATASET_PRESETS = ml_collections.ConfigDict({
   'eurosat': ml_collections.ConfigDict(
       {
         'model_dir': '.',
-        'init_dir': '.',
+        'init_model_dir': '.',
         'tfds_data_dir': None,
         'pp': ml_collections.ConfigDict(
           {'train': 'train[:90%]',
@@ -180,7 +180,7 @@ DATASET_PRESETS = ml_collections.ConfigDict({
   'svhn_cropped': ml_collections.ConfigDict(
       {
         'model_dir': '.',
-        'init_dir': '.',
+        'init_model_dir': '.',
         'tfds_data_dir': None,
         'pp': ml_collections.ConfigDict(
           {'train': 'train',
@@ -192,7 +192,7 @@ DATASET_PRESETS = ml_collections.ConfigDict({
   'sun397': ml_collections.ConfigDict(
       {
         'model_dir': '.',
-        'init_dir': '.',
+        'init_model_dir': '.',
         'tfds_data_dir': None,
         'pp': ml_collections.ConfigDict(
           {'train': 'train',
@@ -204,7 +204,7 @@ DATASET_PRESETS = ml_collections.ConfigDict({
   'imagenet2012': ml_collections.ConfigDict(
       {
         'model_dir': '.',
-        'init_dir': '.',
+        'init_model_dir': '.',
         'tfds_data_dir': None,
       'pp': ml_collections.ConfigDict(
           {'train': 'train',
@@ -216,7 +216,7 @@ DATASET_PRESETS = ml_collections.ConfigDict({
   'imagenette': ml_collections.ConfigDict(
       {
         'model_dir': '.',
-        'init_dir': '.',
+        'init_model_dir': '.',
         'tfds_data_dir': None,
         'pp': ml_collections.ConfigDict(
           {'train': 'train',
@@ -228,7 +228,7 @@ DATASET_PRESETS = ml_collections.ConfigDict({
   'stl10': ml_collections.ConfigDict(
       {
         'model_dir': '.',
-        'init_dir': '.',
+        'init_model_dir': '.',
         'tfds_data_dir': None,
         'pp': ml_collections.ConfigDict(
           {'train': 'train',
@@ -240,7 +240,7 @@ DATASET_PRESETS = ml_collections.ConfigDict({
   'dtd': ml_collections.ConfigDict(
       {
         'model_dir': '.',
-        'init_dir': '.',
+        'init_model_dir': '.',
         'tfds_data_dir': None,
         'pp': ml_collections.ConfigDict(
           {'train': 'train',
@@ -252,7 +252,7 @@ DATASET_PRESETS = ml_collections.ConfigDict({
     'gtsrb': ml_collections.ConfigDict(
       {
         'model_dir': '.',
-        'init_dir': '.',
+        'init_model_dir': '.',
         'tfds_data_dir': None,
         'pp': ml_collections.ConfigDict(
           {'train': 'train',
@@ -264,7 +264,7 @@ DATASET_PRESETS = ml_collections.ConfigDict({
     'omniglot': ml_collections.ConfigDict(
       {
         'model_dir': '.',
-        'init_dir': '.',
+        'init_model_dir': '.',
         'tfds_data_dir': None,
         'pp': ml_collections.ConfigDict(
           {'train': 'train',
@@ -276,7 +276,7 @@ DATASET_PRESETS = ml_collections.ConfigDict({
     'vgg-flowers': ml_collections.ConfigDict(
       {
         'model_dir': '.',
-        'init_dir': '.',
+        'init_model_dir': '.',
         'tfds_data_dir': None,
         'pp': ml_collections.ConfigDict(
           {'train': 'train',
@@ -288,7 +288,7 @@ DATASET_PRESETS = ml_collections.ConfigDict({
     'aircraft': ml_collections.ConfigDict(
       {
         'model_dir': '.',
-        'init_dir': '.',
+        'init_model_dir': '.',
         'tfds_data_dir': None,
         'pp': ml_collections.ConfigDict(
           {'train': 'train',
@@ -300,7 +300,7 @@ DATASET_PRESETS = ml_collections.ConfigDict({
     'daimlerpedcls': ml_collections.ConfigDict(
       {
         'model_dir': '.',
-        'init_dir': '.',
+        'init_model_dir': '.',
         'tfds_data_dir': None,
         'pp': ml_collections.ConfigDict(
           {'train': 'train',
@@ -313,7 +313,7 @@ DATASET_PRESETS = ml_collections.ConfigDict({
   'ucf101': ml_collections.ConfigDict(
       {
         'model_dir': '.',
-        'init_dir': '.',
+        'init_model_dir': '.',
         'tfds_data_dir': None,
         'pp': ml_collections.ConfigDict(
           {'train': 'train',
@@ -325,7 +325,7 @@ DATASET_PRESETS = ml_collections.ConfigDict({
   'resisc45': ml_collections.ConfigDict(
       {
         'model_dir': '.',
-        'init_dir': '.',
+        'init_model_dir': '.',
         'tfds_data_dir': None,
         'pp': ml_collections.ConfigDict(
           {'train': 'train[10%:90%]',
@@ -337,7 +337,7 @@ DATASET_PRESETS = ml_collections.ConfigDict({
     'caltech101': ml_collections.ConfigDict(
       {
         'model_dir': '.',
-        'init_dir': '.',
+        'init_model_dir': '.',
         'tfds_data_dir': None,
         'pp': ml_collections.ConfigDict(
           {'train': 'train',
@@ -349,7 +349,7 @@ DATASET_PRESETS = ml_collections.ConfigDict({
     'cassava': ml_collections.ConfigDict(
       {
         'model_dir': '.',
-        'init_dir': '.',
+        'init_model_dir': '.',
         'tfds_data_dir': None,
         'pp': ml_collections.ConfigDict(
           {'train': 'train',
@@ -361,7 +361,7 @@ DATASET_PRESETS = ml_collections.ConfigDict({
     'oxford_iiit_pet': ml_collections.ConfigDict(
       {
         'model_dir': '.',
-        'init_dir': '.',
+        'init_model_dir': '.',
         'tfds_data_dir': None,
         'pp': ml_collections.ConfigDict(
           {'train': 'train',
@@ -373,7 +373,7 @@ DATASET_PRESETS = ml_collections.ConfigDict({
     'oxford_flowers102': ml_collections.ConfigDict(
       {
         'model_dir': '.',
-        'init_dir': '.',
+        'init_model_dir': '.',
         'tfds_data_dir': None,
         'pp': ml_collections.ConfigDict(
           {'train': 'train',
@@ -385,7 +385,7 @@ DATASET_PRESETS = ml_collections.ConfigDict({
       'colorectal_histology': ml_collections.ConfigDict(
       {
         'model_dir': '.',
-        'init_dir': '.',
+        'init_model_dir': '.',
         'tfds_data_dir': None,
         'pp': ml_collections.ConfigDict(
           {'train': 'train[:90%]',
@@ -397,7 +397,7 @@ DATASET_PRESETS = ml_collections.ConfigDict({
     'places365_small': ml_collections.ConfigDict(
       {
         'model_dir': '.',
-        'init_dir': '.',
+        'init_model_dir': '.',
         'tfds_data_dir': None,
         'pp': ml_collections.ConfigDict(
           {'train': 'train',
@@ -409,7 +409,7 @@ DATASET_PRESETS = ml_collections.ConfigDict({
     'stanford_dogs': ml_collections.ConfigDict(
       {
         'model_dir': '.',
-        'init_dir': '.',
+        'init_model_dir': '.',
         'tfds_data_dir': None,
         'pp': ml_collections.ConfigDict(
           {'train': 'train',

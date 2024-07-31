@@ -8,7 +8,7 @@ import jax.numpy as jnp
 from jax import lax
 
 import optax
-from utils import tree_norm
+from utils import tree_norm, tree_inner_prod
 
 def zero_one_loss(logits, labels):
   accuracy = jnp.mean(jnp.argmax(logits, -1) == jnp.argmax(labels, -1))
