@@ -19,7 +19,7 @@ from utils import (add_trees,
 
 TINY = 1e-6
 MAX_ITER=100
-
+from tqdm import tqdm
 
 
 def compute_eigenvalues(rng, hvp_fn, params, eigenvalues=[], eigenvectors=[], max_iter=MAX_ITER, tol=1e-3, top_n=1):
@@ -31,12 +31,12 @@ def compute_eigenvalues(rng, hvp_fn, params, eigenvalues=[], eigenvectors=[], ma
     curr_n = len(eigenvalues)
     while curr_n < top_n:            
         eigenvalue = None
-        v =  normalize_tree(normal_tree_like(rngs[curr_n], params)) # generate random vector
+        v =  normalize_tree(normal_tree_like(rngs[curr_n], params))[0] # generate random vector
         for _ in range(max_iter):
             v = orthnormal(v, eigenvectors)
             Hv = hvp_fn(theta=params, v=v)
             t_eigen = tree_inner_prod(v, Hv)
-            v = normalize_tree(Hv)
+            v = normalize_tree(Hv)[0]
             if eigenvalue == None:
                 eigenvalue = t_eigen
             else:
@@ -65,10 +65,10 @@ def compute_trace(rng, hvp_fn, params, max_iter=MAX_ITER, tol=TINY):
         rad_v = rademacher_tree_like(rngs[i], params) # generate Rademacher random variables 
         Hv =  hvp_fn(theta=params,v=rad_v)
         trace_vhv += [tree_inner_prod(rad_v, Hv)]
-        if abs(jnp.mean(trace_vhv) - trace) / (abs(trace) + TINY) < tol:
+        if abs(jnp.mean(jnp.stack(trace_vhv)) - trace) / (abs(trace) + TINY) < tol:
             return trace_vhv
         else:
-            trace = jnp.mean(trace_vhv)
+            trace = jnp.mean(jnp.stack(trace_vhv))
     return trace_vhv
 
 
@@ -86,11 +86,11 @@ def compute_density(rng, hvp_fn, params, n_slq=1, n_eigs=100):
         rngs = random.split(slq_rng, n_eigs)
         alphas = []
         betas = []
-        vs = [normalize_tree(normal_tree_like(rngs[0], params))]
+        vs = [normalize_tree(normal_tree_like(rngs[0], params))[0]]
         w_ = hvp_fn(theta=params, v=vs[0])
-        alphas += [tree_inner_prod(w_, vs[0])]
-        w = add_trees([w_, vs[0]], [1., - alphas[0]])
-        for i in range(1, n_eigs):
+        alphas = [tree_inner_prod(w_, vs[0])]
+        w = add_trees([w_, vs[0]], [1., -alphas[0]])
+        for i in tqdm(range(1, n_eigs)):
             beta_i = tree_norm(w)
             betas += [beta_i]
             if beta_i != 0.:
@@ -100,7 +100,7 @@ def compute_density(rng, hvp_fn, params, n_slq=1, n_eigs=100):
                 vs += [orthnormal(normal_tree_like(rngs[i], params), vs)]
             w_ = hvp_fn(theta=params, v=vs[i])
             alphas += [tree_inner_prod(w_, vs[i])]
-            w = add_trees([w_, vs[i], vs[i-1]] , [1., -alphas[i], -betas[i]])
+            w = add_trees([w_, vs[i], vs[i-1]] , [1., -alphas[i], -betas[i-1]])
         eigenvalues, eigenvectors = eigh_tridiagonal(alphas, betas)
 
         eigen_list_full += [eigenvalues]
