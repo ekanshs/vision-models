@@ -1,7 +1,7 @@
 ## Adapted from: https://github.com/isl-org/MultiObjectiveOptimization/blob/master/multi_task/min_norm_solvers.py
 
 import numpy as np
-from utils import inner_product
+import utils
 
 
 def dot_prod(v1,v2):

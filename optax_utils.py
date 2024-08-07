@@ -6,7 +6,7 @@ import jax.numpy as jnp
 
 
 def create_learning_rate_fn(
-  decay_schedule:str, num_train_steps: int, num_warmup_steps: int, learning_rate: float
+  decay_schedule:str, num_train_steps: int, num_warmup_steps: int, learning_rate: float, milestones = [], gamma = 0.1 
 ) -> Callable[[int], jnp.ndarray]:
   """Returns a linear warmup, with linear or cosine decay learning rate function."""  
   warmup_fn = optax.linear_schedule(
@@ -26,6 +26,13 @@ def create_learning_rate_fn(
         init_value=learning_rate, 
         decay_steps=num_train_steps - num_warmup_steps
     )
+  elif decay_schedule == 'piecewise-constant':
+    # milestones = map(lambda x: x * steps_p_epoch, optimizer[MILESTONES])
+    boundaries_and_scales = {i - num_warmup_steps : gamma for i in milestones}
+    decay_schedule = optax.piecewise_constant_schedule(
+                      init_value=learning_rate, 
+                      boundaries_and_scales=boundaries_and_scales)
+
   schedule_fn = optax.join_schedules(schedules=[warmup_fn, decay_fn], boundaries=[num_warmup_steps])
   return schedule_fn
 

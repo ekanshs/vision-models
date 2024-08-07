@@ -17,6 +17,7 @@ import tensorflow as tf
 
 import train
 import multi_task_merge
+import hessian_comp
 
 FLAGS = flags.FLAGS
 
@@ -56,6 +57,8 @@ def main(argv):
     train.train_and_evaluate(FLAGS.config, FLAGS.expdir)
   elif FLAGS.job_type == 'merge':
     multi_task_merge.evaluate(FLAGS.config)
+  elif FLAGS.job_type == 'hessian':
+    hessian_comp.compute_hessian_stats(FLAGS.config, FLAGS.expdir)
   else:
     raise app.UsageError(f"job_type, {FLAGS.job_type}, is not defined ")
 
