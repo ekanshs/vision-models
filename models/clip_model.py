@@ -6,17 +6,24 @@ import jax.numpy as jnp
 import jax
 
 from transformers import (AutoConfig, 
+                          AutoTokenizer,
                           FlaxCLIPModel,
                           FlaxCLIPVisionModel
                           )
 
 from data.templates import get_templates
 from data.input_pipeline import get_dataset_info
-import tqdm
+from tqdm import tqdm
 
 ModuleDef=Any
 
 vision_module = FlaxCLIPVisionModel.module_class
+
+MODEL_NAMES = {
+  'ViTB16': 'openai/clip-vit-base-patch16',
+  'ViTB32': 'openai/clip-vit-base-patch32',
+  'VITL14': 'openai/clip-vit-large-patch14'
+}
 
 class CLIPModelwithClassifier(nn.Module):
   config: Any
@@ -107,8 +114,9 @@ def ViTL14(*, num_classes, dtype, **kwargs):
 
 def get_zero_shot_params(model_name, dataset=None, datasets=None):
   assert (dataset is not None) or (datasets is not None)
-  model = FlaxCLIPModel.from_pretrained(model_name)
-  tokenizer = FlaxCLIPModel.from_pretrained(model_name)
+
+  model = FlaxCLIPModel.from_pretrained(MODEL_NAMES[model_name])
+  tokenizer = AutoTokenizer.from_pretrained(MODEL_NAMES[model_name])
   if dataset is not None:
     return _get_zero_shot_params(model, tokenizer, dataset)
   return _get_multihead_zero_shot_params(model, tokenizer, datasets)

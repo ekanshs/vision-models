@@ -25,6 +25,7 @@ def with_model_dataset_opt(config: ml_collections.ConfigDict, model: str, datase
   config.optimizer = TRAIN_OPTIMIZER_PRESETS[opt]
   config.pretrained_dir = ''
   config.from_pretrained = True
+  config.openai_model = True
   config.train_classifier_at_init = True
   return config.lock()
 

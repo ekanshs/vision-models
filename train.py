@@ -130,7 +130,7 @@ def train_and_evaluate(
     total_classifier_warmup_steps = int(steps_per_epoch * config.training_schedule.classifier.warmup_epochs)
 
     classifier_lr_fn = create_learning_rate_fn(
-      config.training_schedule.decay_schedule, 
+      "cosine", # making sure classifier is trained using cosine decay
       total_classifier_train_steps, total_classifier_warmup_steps, 
       learning_rate=config.optimizer.classifier.learning_rate * np.sqrt(jax.device_count())
     )
@@ -142,7 +142,7 @@ def train_and_evaluate(
       apply_fn=model.apply,
       params=params,
       tx=tx
-    )  
+    )
     train_iter = input_pipeline.prefetch(ds_train, config.prefetch, axis_name)
     if axis_name is not None:
       state = jax_utils.replicate(state)
@@ -169,7 +169,10 @@ def train_and_evaluate(
   init_params = initialize(rng, model, batch_shape=(1,config[dataset].pp.crop, config[dataset].pp.crop, 3))
   
   if config.from_pretrained:
+    logging.info("Loading from pre-trained")
+    logging.info(config.pretrained_dir)
     pretrained_raw_state = restore_checkpoint(config.pretrained_dir)
+    
     if pretrained_raw_state is not None:
       init_params = {'encoder' : pretrained_raw_state['params']['encoder'],
           'visual_projection' : pretrained_raw_state['params']['visual_projection'],

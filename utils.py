@@ -142,7 +142,7 @@ def normal_tree_like(rng, t):
   return tree_map(lambda x: random.normal(rng, shape=x.shape), t)
 
 def rademacher_tree_like(rng, t):
-  return tree_map(lambda x: random.rademacher(rng, shape=x.shape), t)
+  return tree_map(lambda x: random.rademacher(rng, shape=x.shape, dtype=x.dtype), t)
 
 def projection(t1, t2):
   '''
@@ -157,7 +157,7 @@ def orthnormal(t, ts):
     """
     for t_ in ts:
         t = tree_subtract(t, projection(t, t_))
-    return normalize_tree(t)
+    return normalize_tree(t)[0]
 
 
 def restore_checkpoint(workdir, target=None):
